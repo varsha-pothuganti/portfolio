@@ -1,0 +1,4 @@
+.cursor/.gh-token
+.audit-screenshots/
+scripts/audit-sections.mjs
+.DS_Store

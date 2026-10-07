@@ -62,7 +62,7 @@
     shareBtn.addEventListener("click", async () => {
       const shareData = {
         title: "Varsha Pothuganti | Digital Marketer",
-        text: "Check out this Next Gen Digital marketing portfolio",
+        text: "Check out Varsha Pothuganti's digital marketing portfolio",
         url: window.location.href,
       };
       if (navigator.share) {
@@ -81,7 +81,7 @@
     const heroCopy = document.getElementById("visitor-copy");
     const footer = document.getElementById("footer-visitors");
     if (window.location.protocol === "file:") {
-      const preview = "Live on GitHub Pages — visitor stats appear there";
+      const preview = "Welcome to my portfolio";
       if (heroCopy) heroCopy.textContent = preview;
       if (footer) footer.textContent = "";
       return;
@@ -140,24 +140,6 @@
     reveals.forEach((el) => el.classList.add("visible"));
   }
 
-  const skillBars = document.querySelector(".skill-bars");
-  if (skillBars && "IntersectionObserver" in window) {
-    const skillObs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            skillObs.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-    skillObs.observe(skillBars);
-  } else if (skillBars) {
-    skillBars.classList.add("is-visible");
-  }
-
   const progress = document.getElementById("scroll-progress");
   const backToTop = document.getElementById("back-to-top");
   const header = document.querySelector(".site-header");
@@ -209,6 +191,8 @@
 
   const filterChips = document.querySelectorAll(".filter-chip");
   const projectCards = document.querySelectorAll(".project-card[data-category]");
+  const projectsGrid = document.getElementById("projects-grid");
+  const galleryHint = document.querySelector(".gallery-hint");
 
   filterChips.forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -219,6 +203,58 @@
         const show = filter === "all" || cat === filter;
         card.classList.toggle("is-hidden", !show);
       });
+      if (projectsGrid) projectsGrid.scrollTo({ left: 0, behavior: "smooth" });
     });
   });
+
+  if (projectsGrid && galleryHint) {
+    const hideHint = () => {
+      galleryHint.classList.add("is-faded");
+      projectsGrid.removeEventListener("scroll", hideHint);
+    };
+    projectsGrid.addEventListener("scroll", hideHint, { passive: true });
+  }
+
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImage = document.getElementById("lightbox-image");
+  const lightboxCaption = document.getElementById("lightbox-caption");
+
+  function openLightbox(src, alt, caption) {
+    if (!lightbox || !lightboxImage) return;
+    lightboxImage.src = src;
+    lightboxImage.alt = alt || "";
+    if (lightboxCaption) lightboxCaption.textContent = caption || "";
+    lightbox.hidden = false;
+    document.body.classList.add("lightbox-open");
+  }
+
+  function closeLightbox() {
+    if (!lightbox || !lightboxImage) return;
+    lightbox.hidden = true;
+    lightboxImage.removeAttribute("src");
+    document.body.classList.remove("lightbox-open");
+  }
+
+  document.querySelectorAll(".lightbox-trigger").forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      openLightbox(
+        trigger.dataset.lightboxSrc,
+        trigger.dataset.lightboxAlt,
+        trigger.dataset.lightboxCaption
+      );
+    });
+  });
+
+  if (lightbox) {
+    lightbox.querySelectorAll("[data-lightbox-close]").forEach((btn) => {
+      btn.addEventListener("click", closeLightbox);
+    });
+    lightbox.addEventListener("click", (event) => {
+      const panel = lightbox.querySelector(".lightbox-panel");
+      if (panel && !panel.contains(event.target)) closeLightbox();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !lightbox.hidden) closeLightbox();
+    });
+  }
 })();
